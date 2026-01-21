@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Input Penjualan - Perusahaan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <img src="logo.png" alt="SGM Logo"
+                    style="height: 60px; width: auto; object-fit: contain; margin-right: 1rem;">
+                <h1>Sistem Akuntansi SGM</h1>
+                <div class="user-profile">
+                    <span class="user-email" id="userEmail">Loading...</span>
+                    <button class="btn-logout" id="logoutBtn" title="Logout">
+                        <span>🚪</span> Keluar
+                    </button>
+                </div>
+            </div>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('penjualan')">Penjualan</button>
+                <button class="tab-btn" onclick="switchTab('pembelian')">Pembelian</button>
+                <button class="tab-btn" onclick="switchTab('piutang')">Laporan Piutang</button>
+                <button class="tab-btn" onclick="switchTab('hutang')">Laporan Hutang</button>
+                <button class="tab-btn" onclick="switchTab('kas')">Transaksi Kas</button>
+                <button class="tab-btn" onclick="switchTab('jurnal')">Jurnal Umum</button>
+                <button class="tab-btn" onclick="switchTab('bukubesar')">Buku Besar</button>
+                <button class="tab-btn" onclick="switchTab('labarugi')">Laba Rugi</button>
+                <button class="tab-btn" onclick="switchTab('laporandivisi')">Laporan Divisi</button>
+                <button class="tab-btn" onclick="switchTab('laporanppn')">Laporan PPN</button>
+                <button class="tab-btn" onclick="switchTab('pencarian')">Pencarian</button>
+                <button class="tab-btn" onclick="switchTab('datamaster')">Data Master</button>
+            </div>
+        </header>
+
+        <!-- MODULE PENJUALAN -->
+        <div id="penjualanModule" class="module active">
+            <div class="form-container">
+                <h2 style="margin-bottom: 20px;">Input Penjualan</h2>
+                <form id="salesForm">
+                    <!-- Informasi Transaksi -->
+                    <div class="section">
+                        <h2>Informasi Transaksi</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tanggal">Tanggal *</label>
+                                <input type="text" id="tanggal" name="tanggal" placeholder="DD/MM/YYYY" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="noFaktur">No. Faktur *</label>
+                                <input type="text" id="noFaktur" name="noFaktur" placeholder="NPP-20260121-0001"
+                                    readonly required>
+                            </div>
+                            <div class="form-group">
+                                <label for="divisi">Divisi *</label>
+                                <select id="divisi" name="divisi" required>
+                                    <option value="">Pilih Divisi</option>
+                                    <option value="Angkutan">Angkutan</option>
+                                    <option value="Besi">Besi</option>
+                                    <option value="Pakan">Pakan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Pelanggan -->
+                    <div class="section">
+                        <h2>Data Pelanggan</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="namaPelanggan">Nama Pelanggan *</label>
+                                <input type="text" id="namaPelanggan" name="namaPelanggan"
+                                    placeholder="Ketik untuk mencari..." autocomplete="off" required>
+                                <div id="customerSuggestions" class="suggestions"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="noTelepon">No. Telepon *</label>
+                                <input type="tel" id="noTelepon" name="noTelepon" placeholder="08123456789" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="alamatPelanggan">Alamat Pelanggan *</label>
+                                <textarea id="alamatPelanggan" name="alamatPelanggan" rows="3"
+                                    placeholder="Alamat Lengkap" required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="npwpNik">NPWP / NIK *</label>
+                                <input type="text" id="npwpNik" name="npwpNik" placeholder="NPWP atau NIK" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Barang -->
+                    <div class="section">
+                        <h2>Data Barang & Harga</h2>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="namaBarang">Nama Barang *</label>
+                                <input type="text" id="namaBarang" name="namaBarang"
+                                    placeholder="Ketik untuk mencari barang..." autocomplete="off">
+                                <div id="productSuggestions" class="suggestions"></div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="kodeBarang">Kode Barang</label>
+                                <input type="text" id="kodeBarang" name="kodeBarang">
+                            </div>
+                            <div class="form-group">
+                                <label for="satuanBarang">Satuan</label>
+                                <input type="text" id="satuanBarang" name="satuanBarang">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jumlah">Jumlah (Qty) *</label>
+                                <input type="number" id="jumlah" name="jumlah" min="1" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="hargaSatuan">Harga Satuan (Rp) *</label>
+                                <input type="number" id="hargaSatuan" name="hargaSatuan" min="0" step="1"
+                                    placeholder="0">
+                            </div>
+                        </div>
+                        <div class="form-row" style="justify-content: flex-end; margin-top: 10px;">
+                            <button type="button" id="addItemBtn" class="btn btn-secondary" style="width: auto;">+
+                                Tambah Barang</button>
+                        </div>
+
+                        <!-- Cart Table for Sales -->
+                        <div class="table-responsive" style="margin-top: 20px; display: none;" id="salesCartContainer">
+                            <table id="salesCartTable" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Barang</th>
+                                        <th>Kode</th>
+                                        <th>Qty</th>
+                                        <th>Harga</th>
+                                        <th>Total</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesCartBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Perhitungan -->
+                    <div class="section">
+                        <h2>Perhitungan & Pembayaran</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subtotal">Subtotal (Rp)</label>
+                                <input type="text" id="subtotal" name="subtotal" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="diskon">Diskon (Rp)</label>
+                                <input type="number" id="diskon" name="diskon" min="0" step="1" value="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jenisPpn">Jenis PPN *</label>
+                                <select id="jenisPpn" name="jenisPpn" required>
+                                    <option value="0">Tidak ada PPN (0%)</option>
+                                    <option value="11">PPN 11%</option>
+                                    <option value="12" selected>PPN 12%</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nilaiPpn">Nilai PPN (Rp)</label>
+                                <input type="text" id="nilaiPpn" name="nilaiPpn" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="total">Total (Rp)</label>
+                                <input type="text" id="total" name="total" readonly class="total-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="metodePembayaran">Metode Pembayaran *</label>
+                                <select id="metodePembayaran" name="metodePembayaran" required>
+                                    <option value="">Pilih Metode</option>
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Kredit">Kredit</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row" id="pembayaranKreditRow" style="display: none;">
+                            <div class="form-group">
+                                <label for="jumlahDibayar">Jumlah Dibayar (Rp)</label>
+                                <input type="number" id="jumlahDibayar" name="jumlahDibayar" min="0" step="1" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="sisaPembayaran">Sisa Pembayaran (Rp)</label>
+                                <input type="text" id="sisaPembayaran" name="sisaPembayaran" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Submit -->
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
+                        <button type="reset" class="btn btn-secondary">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabel Riwayat Transaksi -->
+            <div class="history-container">
+                <h2>Riwayat Transaksi</h2>
+
+                <!-- Filter Section -->
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <input type="text" id="searchInput" placeholder="Cari No. Faktur, Pelanggan, atau Barang..."
+                            class="filter-input search-box">
+                    </div>
+                    <div class="filter-group date-group">
+                        <input type="date" id="startDate" class="filter-input date-input" placeholder="Dari Tanggal">
+                        <span class="date-separator">-</span>
+                        <input type="date" id="endDate" class="filter-input date-input" placeholder="Sampai Tanggal">
+                    </div>
+                    <button id="resetFilterBtn" class="btn btn-secondary btn-sm">Reset Filter</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="transactionTable">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Divisi</th>
+                                <th>No. Faktur</th>
+                                <th>Pelanggan</th>
+                                <th>Barang</th>
+                                <th>Qty</th>
+                                <th>Harga Satuan</th>
+                                <th>Diskon</th>
+                                <th>PPN</th>
+                                <th>DP</th>
+                                <th>Total</th>
+                                <th>Sisa Tagihan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionBody">
+                            <tr class="no-data">
+                                <td colspan="14">Belum ada transaksi</td>
+                            </tr>
+                        </tbody>
+                        <tfoot id="transactionFooter">
+                            <!-- Total will be injected here via JS if preferred, or just separate div below -->
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Total Keseluruhan Section -->
+                <div id="grandTotalSection" class="grand-total-section" style="display: none;">
+                    Total Penjualan Keseluruhan: <span id="grandTotalValue">Rp 0</span>
+                </div>
+            </div>
+        </div> <!-- End of Penjualan Module -->
+
+        <!-- MODULE PEMBELIAN -->
+        <div id="pembelianModule" class="module">
+            <div class="form-container">
+                <h2 style="margin-bottom: 20px;">Input Pembelian</h2>
+                <form id="purchaseForm">
+                    <!-- Informasi Transaksi -->
+                    <div class="section">
+                        <h2>Informasi Pembelian</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tanggalBeli">Tanggal *</label>
+                                <input type="text" id="tanggalBeli" name="tanggalBeli" placeholder="DD/MM/YYYY"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="noFakturBeli">No. Faktur *</label>
+                                <input type="text" id="noFakturBeli" name="noFakturBeli" placeholder="NPB-20260121-0001"
+                                    readonly required>
+                            </div>
+                            <div class="form-group">
+                                <label for="divisiBeli">Divisi *</label>
+                                <select id="divisiBeli" name="divisiBeli" required>
+                                    <option value="">Pilih Divisi</option>
+                                    <option value="Angkutan">Angkutan</option>
+                                    <option value="Besi">Besi</option>
+                                    <option value="Pakan">Pakan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Supplier -->
+                    <div class="section">
+                        <h2>Data Supplier</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="namaSupplier">Nama Supplier *</label>
+                                <input type="text" id="namaSupplier" name="namaSupplier"
+                                    placeholder="Ketik untuk mencari..." autocomplete="off" required>
+                                <div id="supplierSuggestions" class="suggestions"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="npwpNikSupplier">NPWP/NIK</label>
+                                <input type="text" id="npwpNikSupplier" name="npwpNikSupplier">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="alamatSupplier">Alamat</label>
+                                <input type="text" id="alamatSupplier" name="alamatSupplier">
+                            </div>
+                            <div class="form-group">
+                                <label for="noTeleponSupplier">No. Telepon</label>
+                                <input type="text" id="noTeleponSupplier" name="noTeleponSupplier">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Barang -->
+                    <div class="section">
+                        <h2>Data Barang & Harga</h2>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="namaBarangBeli">Nama Barang *</label>
+                                <input type="text" id="namaBarangBeli" name="namaBarangBeli" autocomplete="off"
+                                    placeholder="Ketik untuk mencari barang...">
+                                <div id="productSuggestionsBeli" class="suggestions"></div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="kodeBarangBeli">Kode Barang</label>
+                                <input type="text" id="kodeBarangBeli" name="kodeBarangBeli">
+                            </div>
+                            <div class="form-group">
+                                <label for="satuanBarangBeli">Satuan</label>
+                                <input type="text" id="satuanBarangBeli" name="satuanBarangBeli">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jumlahBeli">Jumlah (Qty) *</label>
+                                <input type="number" id="jumlahBeli" name="jumlahBeli" min="1" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="hargaSatuanBeli">Harga Satuan (Rp) *</label>
+                                <input type="number" id="hargaSatuanBeli" name="hargaSatuanBeli" min="0" step="100">
+                            </div>
+                        </div>
+                        <!-- Note: jenisPpnBeli moved out or kept if per item?
+                              User asked to make it same. Sales has PPN in Calculation section (Global).
+                              However, current Purchase logic might have relied on per-item PPN.
+                              But let's look at Sales: Sales has `jenisPpn` in Calculation section.
+                              If we want them SAME, we should probably remove PPN from Item row here if we want 100% same layout.
+                              BUT, I will keep PPN in calculation section for Purchase (already there? let's check).
+                              
+                              Wait, line 321 in previous file view showed `jenisPpnBeli` in Item Section.
+                              Logic in `addItemToPurchaseCart` uses it.
+                              
+                              If I strictly follow "samakan" (make same), I should probably remove it from Item input 
+                              and rely on Global PPN in calculation section (which is standard for simple apps), 
+                              OR keep it if Purchase really needs per-item. 
+                              However, given the request "samakan", I will mimic Sales structure where PPN is usually global or handled differently.
+                              
+                              Actually, looking at `index.html` again:
+                              Lines 352+ is "Perhitungan". I see `subtotalBeli`, `diskonBeli`.
+                              Does it have `jenisPpnBeli` in global section? 
+                              Let's check lines 352-390 of index.html from previous read.
+                              
+                              Wait, I don't see `jenisPpnBeli` in lines 352-390 invalidating my assumption?
+                              Let me re-read lines 350-400 of index.html.
+                          -->
+                        <!-- I will temporarily keep PPN input here via hidden or move it to global if needed.
+                             But to match Sales perfectly, Sales does NOT have PPN in item input.
+                             Sales has PPN in "Perhitungan & Pembayaran" section (Line 153).
+                             
+                             Let's check if Purchase has PPN in "Perhitungan".
+                             If not, I should add it there and remove from here.
+                        -->
+                        <div class="form-row" style="justify-content: flex-end; margin-top: 10px;">
+                            <button type="button" id="addItemBeliBtn" class="btn btn-secondary" style="width: auto;">+
+                                Tambah Barang</button>
+                        </div>
+
+                        <!-- Cart Table for Purchase -->
+                        <div class="table-responsive" style="margin-top: 20px; display: none;"
+                            id="purchaseCartContainer">
+                            <table id="purchaseCartTable" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Barang</th>
+                                        <th>Kode</th>
+                                        <th>Qty</th>
+                                        <th>Harga</th>
+                                        <th>Total</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchaseCartBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Perhitungan -->
+                    <div class="section">
+                        <h2>Perhitungan & Pembayaran</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subtotalBeli">Subtotal (Rp)</label>
+                                <input type="text" id="subtotalBeli" name="subtotalBeli" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="diskonBeli">Diskon (Rp)</label>
+                                <input type="number" id="diskonBeli" name="diskonBeli" min="0" step="1" value="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jenisPpnBeli">Jenis PPN *</label>
+                                <select id="jenisPpnBeli" name="jenisPpnBeli">
+                                    <option value="0">Tidak ada PPN (0%)</option>
+                                    <option value="11">PPN 11%</option>
+                                    <option value="12" selected>PPN 12%</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nilaiPpnBeli">Nilai PPN (Rp)</label>
+                                <input type="text" id="nilaiPpnBeli" name="nilaiPpnBeli" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="totalBeli">Total (Rp)</label>
+                                <input type="text" id="totalBeli" name="totalBeli" readonly class="total-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="metodePembayaranBeli">Metode Pembayaran *</label>
+                                <select id="metodePembayaranBeli" name="metodePembayaranBeli" required>
+                                    <option value="">Pilih Metode</option>
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Kredit">Kredit</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row" id="pembayaranKreditBeliRow" style="display: none;">
+                            <div class="form-group">
+                                <label for="uangMukaBeli">Jumlah Dibayar / DP (Rp)</label>
+                                <input type="number" id="uangMukaBeli" name="uangMukaBeli" min="0" step="1" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="sisaPembayaranBeli">Sisa Pembayaran (Rp)</label>
+                                <input type="text" id="sisaPembayaranBeli" name="sisaPembayaranBeli" readonly>
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary">Simpan Pembelian</button>
+                            <button type="reset" class="btn btn-secondary">Reset Form</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabel Riwayat Pembelian -->
+            <div class="history-container">
+                <h2>Riwayat Pembelian</h2>
+
+                <!-- Filter Section Pembelian -->
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <input type="text" id="searchPurchaseInput"
+                            placeholder="Cari No. Faktur, Supplier, atau Barang..." class="filter-input search-box">
+                    </div>
+                    <div class="filter-group date-group">
+                        <input type="date" id="startPurchaseDate" class="filter-input date-input"
+                            placeholder="Dari Tanggal">
+                        <span class="date-separator">-</span>
+                        <input type="date" id="endPurchaseDate" class="filter-input date-input"
+                            placeholder="Sampai Tanggal">
+                    </div>
+                    <button id="resetPurchaseFilterBtn" class="btn btn-secondary btn-sm">Reset Filter</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="purchaseTable">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Divisi</th>
+                                <th>No. Faktur</th>
+                                <th>Supplier</th>
+                                <th>Barang</th>
+                                <th>Qty</th>
+                                <th>Harga Satuan</th>
+                                <th>Diskon</th>
+                                <th>PPN</th>
+                                <th>DP</th>
+                                <th>Total</th>
+                                <th>Sisa Tagihan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchaseBody">
+                            <tr class="no-data">
+                                <td colspan="14">Belum ada pembelian</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Total Keseluruhan Section Pembelian -->
+                <div id="grandTotalPurchaseSection" class="grand-total-section" style="display: none;">
+                    Total Pembelian Keseluruhan: <span id="grandTotalPurchaseValue">Rp 0</span>
+                </div>
+            </div>
+
+
+        </div> <!-- End of Pembelian Module -->
+
+        <!-- MODULE PIUTANG SEWA/SALDO AWAL -->
+        <div id="piutangModule" class="module">
+
+            <!-- Form Input Saldo Awal Piutang -->
+            <div class="form-container">
+                <h2 style="margin-bottom: 20px;">Input Saldo Awal Piutang</h2>
+                <form id="piutangForm">
+                    <div class="section">
+                        <h2>Data Piutang</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tanggalPiutang">Tanggal *</label>
+                                <input type="text" id="tanggalPiutang" name="tanggalPiutang" placeholder="DD/MM/YYYY"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="namaPelangganPiutang">Nama Pelanggan *</label>
+                                <input type="text" id="namaPelangganPiutang" name="namaPelangganPiutang"
+                                    placeholder="Ketik untuk mencari..." autocomplete="off" required>
+                                <div id="customerSuggestionsPiutang" class="suggestions"></div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="keteranganPiutang">Keterangan</label>
+                                <input type="text" id="keteranganPiutang" name="keteranganPiutang"
+                                    placeholder="Contoh: Saldo awal tahun 2025">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jumlahPiutang">Jumlah Piutang (Rp) *</label>
+                                <input type="number" id="jumlahPiutang" name="jumlahPiutang" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dibayarPiutang">Sudah Dibayar (Rp)</label>
+                                <input type="number" id="dibayarPiutang" name="dibayarPiutang" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Simpan Saldo Awal</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabel Rekap Piutang per Pelanggan -->
+            <div class="history-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h2>Rekap Piutang per Pelanggan</h2>
+                    <button id="btnCetakRekapPiutang" class="btn btn-secondary btn-sm" onclick="printRekapPiutang()">🖨️
+                        Cetak Rekap</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="rekapPiutangTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Pelanggan</th>
+                                <th>Jml Transaksi</th>
+                                <th>Total Piutang</th>
+                                <th>Total Dibayar</th>
+                                <th>Sisa Piutang</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rekapPiutangBody">
+                            <tr class="no-data">
+                                <td colspan="7">Belum ada data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Grand Total for Rekap -->
+                <div id="grandTotalRekapSection" class="grand-total-section" style="display: none;">
+                    Total Piutang: <span id="grandTotalRekapPiutang">Rp 0</span> |
+                    Total Dibayar: <span id="grandTotalRekapDibayar">Rp 0</span> |
+                    Sisa Piutang: <span id="grandTotalRekapSisa">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Tabel Daftar Detail Piutang -->
+            <div class="history-container">
+                <h2>Daftar Detail Piutang</h2>
+
+                <!-- Filter Section -->
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <input type="text" id="searchPiutangInput" placeholder="Cari Pelanggan..."
+                            class="filter-input search-box">
+                    </div>
+                    <div class="filter-group">
+                        <select id="statusPiutangFilter" class="filter-input">
+                            <option value="">Semua Status</option>
+                            <option value="Belum Lunas">Belum Lunas</option>
+                            <option value="Lunas">Lunas</option>
+                        </select>
+                    </div>
+                    <button id="resetPiutangFilterBtn" class="btn btn-secondary btn-sm">Reset Filter</button>
+                    <div style="margin-left: auto; display: flex; gap: 5px;">
+                        <button id="btnCetakLaporanPiutang" class="btn btn-primary btn-sm"
+                            onclick="printDetailPiutang()">🖨️ Cetak Laporan</button>
+                        <button id="btnExportExcelPiutang" class="btn btn-success btn-sm"
+                            onclick="exportDetailPiutang()">📊 Ekspor Excel</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="daftarPiutangTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Sumber</th>
+                                <th>No. Faktur / Ref</th>
+                                <th>Pelanggan</th>
+                                <th>Keterangan</th>
+                                <th>Total</th>
+                                <th>Dibayar</th>
+                                <th>Sisa</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="daftarPiutangBody">
+                            <tr class="no-data">
+                                <td colspan="11">Belum ada data piutang</td>
+                            </tr>
+                        </tbody>
+                        <tfoot id="piutangFooter">
+                            <tr>
+                                <td colspan="6" style="text-align: right; font-weight: bold;">Total Keseluruhan</td>
+                                <td id="totalPiutangAll" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td id="totalDibayarAll" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td id="totalSisaAll" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Grand Total for Daftar (Redundant but requested) -->
+                <div id="grandTotalDaftarSection" class="grand-total-section" style="display: none;">
+                    Total Piutang: <span id="grandTotalDaftarPiutang">Rp 0</span> |
+                    Total Dibayar: <span id="grandTotalDaftarDibayar">Rp 0</span> |
+                    Sisa Piutang: <span id="grandTotalDaftarSisa">Rp 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE LAPORAN HUTANG -->
+        <div id="hutangModule" class="module">
+
+            <!-- Form Input Saldo Awal Hutang -->
+            <div class="form-container">
+                <h2 style="margin-bottom: 20px;">Input Saldo Awal Hutang</h2>
+                <form id="hutangForm">
+                    <div class="section">
+                        <h2>Data Hutang</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tanggalHutang">Tanggal *</label>
+                                <input type="text" id="tanggalHutang" name="tanggalHutang" placeholder="DD/MM/YYYY"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="namaSupplierHutang">Nama Supplier *</label>
+                                <input type="text" id="namaSupplierHutang" name="namaSupplierHutang"
+                                    placeholder="Ketik untuk mencari..." autocomplete="off" required>
+                                <div id="supplierSuggestionsHutang" class="suggestions"></div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="keteranganHutang">Keterangan</label>
+                                <input type="text" id="keteranganHutang" name="keteranganHutang"
+                                    placeholder="Contoh: Saldo awal tahun 2025">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jumlahHutang">Jumlah Hutang (Rp) *</label>
+                                <input type="number" id="jumlahHutang" name="jumlahHutang" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dibayarHutang">Sudah Dibayar (Rp)</label>
+                                <input type="number" id="dibayarHutang" name="dibayarHutang" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Simpan Saldo Awal</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabel Rekap Hutang per Supplier -->
+            <div class="history-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h2>Rekap Hutang per Supplier</h2>
+                    <button id="btnCetakRekapHutang" class="btn btn-secondary btn-sm" onclick="printRekapHutang()">🖨️
+                        Cetak Rekap</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="rekapHutangTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Supplier</th>
+                                <th>Jml Transaksi</th>
+                                <th>Total Hutang</th>
+                                <th>Total Dibayar</th>
+                                <th>Sisa Hutang</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rekapHutangBody">
+                            <tr class="no-data">
+                                <td colspan="7">Belum ada data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Grand Total for Rekap -->
+                <div id="grandTotalRekapHutangSection" class="grand-total-section" style="display: none;">
+                    Total Hutang: <span id="grandTotalRekapHutang">Rp 0</span> |
+                    Total Dibayar: <span id="grandTotalRekapDibayarHutang">Rp 0</span> |
+                    Sisa Hutang: <span id="grandTotalRekapSisaHutang">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Tabel Daftar Detail Hutang -->
+            <div class="history-container">
+                <h2>Daftar Detail Hutang</h2>
+
+                <!-- Filter Section -->
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <input type="text" id="searchHutangInput" placeholder="Cari Supplier..."
+                            class="filter-input search-box">
+                    </div>
+                    <div class="filter-group">
+                        <select id="statusHutangFilter" class="filter-input">
+                            <option value="">Semua Status</option>
+                            <option value="Belum Lunas">Belum Lunas</option>
+                            <option value="Lunas">Lunas</option>
+                        </select>
+                    </div>
+                    <button id="resetHutangFilterBtn" class="btn btn-secondary btn-sm">Reset Filter</button>
+                    <div style="margin-left: auto; display: flex; gap: 5px;">
+                        <button id="btnCetakLaporanHutang" class="btn btn-primary btn-sm"
+                            onclick="printDetailHutang()">🖨️ Cetak Laporan</button>
+                        <button id="btnExportExcelHutang" class="btn btn-success btn-sm"
+                            onclick="exportDetailHutang()">📊 Ekspor Excel</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="daftarHutangTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Sumber</th>
+                                <th>No. Faktur / Ref</th>
+                                <th>Supplier</th>
+                                <th>Keterangan</th>
+                                <th>Total</th>
+                                <th>Dibayar</th>
+                                <th>Sisa</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="daftarHutangBody">
+                            <tr class="no-data">
+                                <td colspan="11">Belum ada data hutang</td>
+                            </tr>
+                        </tbody>
+                        <tfoot id="hutangFooter">
+                            <tr>
+                                <td colspan="6" style="text-align: right; font-weight: bold;">Total Keseluruhan</td>
+                                <td id="totalHutangAll" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td id="totalDibayarHutangAll" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td id="totalSisaHutangAll" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Grand Total for Daftar -->
+                <div id="grandTotalDaftarHutangSection" class="grand-total-section" style="display: none;">
+                    Total Hutang: <span id="grandTotalDaftarHutang">Rp 0</span> |
+                    Total Dibayar: <span id="grandTotalDaftarDibayarHutang">Rp 0</span> |
+                    Sisa Hutang: <span id="grandTotalDaftarSisaHutang">Rp 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE KAS -->
+        <div id="kasModule" class="module">
+            <div class="form-container">
+                <h2 style="margin-bottom: 20px;">Transaksi Kas</h2>
+
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+
+                    <!-- Form Kas Masuk -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <form id="formKasMasuk"
+                            style="background-color: #e8f5e9; padding: 15px; border-radius: 8px; border: 1px solid #c8e6c9;">
+                            <h3
+                                style="color: #2e7d32; margin-bottom: 15px; border-bottom: 2px solid #2e7d32; padding-bottom: 5px;">
+                                Input Kas Masuk</h3>
+
+                            <!-- Hidden Type -->
+                            <input type="hidden" name="jenis" value="Masuk">
+
+                            <div class="form-group">
+                                <label>Tanggal *</label>
+                                <input type="text" id="tanggalKasMasuk" name="tanggal" placeholder="DD/MM/YYYY"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Divisi *</label>
+                                <select id="divisiKasMasuk" name="divisi" required>
+                                    <option value="Semua Divisi">Semua Divisi</option>
+                                    <option value="Umum">Umum</option>
+                                    <option value="Angkutan">Angkutan</option>
+                                    <option value="Besi">Besi</option>
+                                    <option value="Pakan">Pakan</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Kategori Masuk *</label>
+                                <select id="kategoriKasMasuk" name="kategori" required>
+                                    <!-- Options populated by JS -->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Keterangan *</label>
+                                <input type="text" id="keteranganKasMasuk" name="keterangan"
+                                    placeholder="Terima dari..." required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Jumlah (Rp) *</label>
+                                <input type="number" id="jumlahKasMasuk" name="jumlah" min="0" required>
+                            </div>
+
+                            <div class="button-group" style="margin-top: 15px;">
+                                <button type="submit" class="btn btn-success" style="width: 100%;">Simpan Kas
+                                    Masuk</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Form Kas Keluar -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <form id="formKasKeluar"
+                            style="background-color: #ffebee; padding: 15px; border-radius: 8px; border: 1px solid #ffcdd2;">
+                            <h3
+                                style="color: #c62828; margin-bottom: 15px; border-bottom: 2px solid #c62828; padding-bottom: 5px;">
+                                Input Kas Keluar</h3>
+
+                            <!-- Hidden Type -->
+                            <input type="hidden" name="jenis" value="Keluar">
+
+                            <div class="form-group">
+                                <label>Tanggal *</label>
+                                <input type="text" id="tanggalKasKeluar" name="tanggal" placeholder="DD/MM/YYYY"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Divisi *</label>
+                                <select id="divisiKasKeluar" name="divisi" required>
+                                    <option value="Semua Divisi">Semua Divisi</option>
+                                    <option value="Umum">Umum</option>
+                                    <option value="Angkutan">Angkutan</option>
+                                    <option value="Besi">Besi</option>
+                                    <option value="Pakan">Pakan</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Kategori Keluar *</label>
+                                <select id="kategoriKasKeluar" name="kategori" required>
+                                    <!-- Options populated by JS -->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Keterangan *</label>
+                                <input type="text" id="keteranganKasKeluar" name="keterangan"
+                                    placeholder="Bayar untuk..." required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Jumlah (Rp) *</label>
+                                <input type="number" id="jumlahKasKeluar" name="jumlah" min="0" required>
+                            </div>
+
+                            <div class="button-group" style="margin-top: 15px;">
+                                <button type="submit" class="btn btn-danger" style="width: 100%;">Simpan Kas
+                                    Keluar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tabel Riwayat Kas -->
+            <div class="history-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h2>Daftar Transaksi Kas</h2>
+                    <div style="display: flex; gap: 5px;">
+                        <button id="btnCetakLaporanKas" class="btn btn-primary btn-sm" onclick="printLaporanKas()">🖨️
+                            Cetak Laporan</button>
+                        <button id="btnExportExcelKas" class="btn btn-success btn-sm" onclick="exportExcelKas()">📊
+                            Ekspor Excel</button>
+                    </div>
+                </div>
+
+                <!-- Filter Kas -->
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <input type="text" id="searchKasInput" placeholder="Cari Keterangan/Ref..."
+                            class="filter-input search-box">
+                    </div>
+                    <div class="filter-group date-group">
+                        <input type="date" id="startKasDate" class="filter-input date-input">
+                        <span class="date-separator">-</span>
+                        <input type="date" id="endKasDate" class="filter-input date-input">
+                    </div>
+                    <div class="filter-group">
+                        <select id="filterJenisKas" class="filter-input">
+                            <option value="">Semua Jenis</option>
+                            <option value="Masuk">Kas Masuk</option>
+                            <option value="Keluar">Kas Keluar</option>
+                        </select>
+                    </div>
+                    <button id="resetKasFilterBtn" class="btn btn-secondary btn-sm">Reset Filter</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="kasTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Ref</th>
+                                <th>Jenis</th>
+                                <th>Divisi</th>
+                                <th>Kategori</th>
+                                <th>Keterangan</th>
+                                <th>Masuk (Rp)</th>
+                                <th>Keluar (Rp)</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kasBody">
+                            <tr class="no-data">
+                                <td colspan="10">Belum ada transaksi kas</td>
+                            </tr>
+                        </tbody>
+                        <tfoot id="kasFooter">
+                            <tr>
+                                <td colspan="7" style="text-align: right; font-weight: bold;">Total</td>
+                                <td id="totalKasMasuk" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td id="totalKasKeluar" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" style="text-align: right; font-weight: bold;">Saldo Akhir</td>
+                                <td colspan="2" id="saldoAkhirKas" style="text-align: center; font-weight: bold;">Rp 0
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE JURNAL -->
+        <div id="jurnalModule" class="module">
+            <div class="history-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h2>Jurnal Umum</h2>
+                    <div style="display: flex; gap: 5px;">
+                        <button id="btnCetakJurnal" class="btn btn-primary btn-sm" onclick="printJurnal()">🖨️ Cetak
+                            Jurnal</button>
+                        <button id="btnExportExcelJurnal" class="btn btn-success btn-sm"
+                            onclick="exportExcelJurnal()">📊 Ekspor Excel</button>
+                    </div>
+                </div>
+
+                <!-- Filter Jurnal -->
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <input type="text" id="searchJurnalInput" placeholder="Cari Ref/Akun/Ket..."
+                            class="filter-input search-box">
+                    </div>
+                    <div class="filter-group date-group">
+                        <input type="date" id="startJurnalDate" class="filter-input date-input">
+                        <span class="date-separator">-</span>
+                        <input type="date" id="endJurnalDate" class="filter-input date-input">
+                    </div>
+                    <button id="resetJurnalFilterBtn" class="btn btn-secondary btn-sm">Reset Filter</button>
+                    <button id="refreshJurnalBtn" class="btn btn-info btn-sm" onclick="displayJurnal()"
+                        style="margin-left: 5px;">🔃 Refresh Data</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="jurnalTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>No Ref</th>
+                                <th>Keterangan</th>
+                                <th>Akun</th>
+                                <th>Debit (Rp)</th>
+                                <th>Kredit (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jurnalBody">
+                            <tr class="no-data">
+                                <td colspan="7">Belum ada data jurnal</td>
+                            </tr>
+                        </tbody>
+                        <tfoot id="jurnalFooter">
+                            <tr>
+                                <td colspan="5" style="text-align: right; font-weight: bold;">Total</td>
+                                <td id="totalDebitJurnal" style="text-align: right; font-weight: bold;">Rp 0</td>
+                                <td id="totalKreditJurnal" style="text-align: right; font-weight: bold;">Rp 0</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="text-align: right; font-weight: bold;">Balance Check</td>
+                                <td colspan="2" id="jurnalBalanceCheck" style="text-align: center; font-weight: bold;">-
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- MODULE BUKU BESAR -->
+    <div id="bukubesarModule" class="module">
+        <div class="history-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>Buku Besar</h2>
+                <div style="display: flex; gap: 5px;">
+                    <button id="btnCetakBukuBesar" class="btn btn-primary btn-sm" onclick="printBukuBesar()">🖨️ Cetak
+                        Buku Besar</button>
+                    <button id="btnExportExcelBukuBesar" class="btn btn-success btn-sm"
+                        onclick="exportExcelBukuBesar()">📊 Ekspor Excel</button>
+                </div>
+            </div>
+
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="filterAkunBB" style="margin-right: 10px; font-weight: bold;">Pilih Akun:</label>
+                    <select id="filterAkunBB" class="filter-input" style="width: 200px;">
+                        <option value="">Semua Akun</option>
+                        <option value="Kas">Kas</option>
+                        <option value="Piutang Usaha">Piutang Usaha</option>
+                        <option value="Hutang Usaha">Hutang Usaha</option>
+                        <option value="Persediaan Barang">Persediaan Barang</option>
+                        <option value="Penjualan">Penjualan</option>
+                        <option value="Pembelian">Pembelian</option>
+                        <option value="Harga Pokok Penjualan">Harga Pokok Penjualan (HPP)</option>
+                        <option value="PPN Masukan">PPN Masukan</option>
+                        <option value="PPN Keluaran">PPN Keluaran</option>
+                        <option value="Biaya Operasional">Beban Operasional</option>
+                        <option value="Pendapatan Lain">Pendapatan Lain-lain</option>
+                        <option value="Lainnya">Beban Lain-lain</option>
+                    </select>
+                </div>
+                <div class="filter-group date-group">
+                    <input type="date" id="startBBDate" class="filter-input date-input">
+                    <span class="date-separator">-</span>
+                    <input type="date" id="endBBDate" class="filter-input date-input">
+                </div>
+                <button id="filterBBBtn" class="btn btn-primary btn-sm" onclick="displayBukuBesar()">Tampilkan</button>
+            </div>
+
+            <div class="table-responsive">
+                <table id="bukuBesarTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>No Ref</th>
+                            <th>Keterangan</th>
+                            <th>Debit (Rp)</th>
+                            <th>Kredit (Rp)</th>
+                            <th>Saldo (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bukuBesarBody">
+                        <tr class="no-data">
+                            <td colspan="7">Silakan pilih akun dan klik Tampilkan</td>
+                        </tr>
+                    </tbody>
+                    <tfoot id="bukuBesarFooter">
+                        <tr>
+                            <td colspan="4" style="text-align: right; font-weight: bold;">Total Periode</td>
+                            <td id="totalDebitBB" style="text-align: right; font-weight: bold;">Rp 0</td>
+                            <td id="totalKreditBB" style="text-align: right; font-weight: bold;">Rp 0</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODULE LABA RUGI -->
+    <div id="labarugiModule" class="module">
+        <div class="history-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>Laporan Laba Rugi</h2>
+                <div style="display: flex; gap: 5px;">
+                    <button id="btnCetakLabaRugi" class="btn btn-primary btn-sm" onclick="printLabaRugi()">🖨️ Cetak
+                        Laporan</button>
+                    <button id="btnExportExcelLabaRugi" class="btn btn-success btn-sm"
+                        onclick="exportExcelLabaRugi()">📊 Ekspor Excel</button>
+                </div>
+            </div>
+
+            <!-- Filter Laba Rugi -->
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="filterDivisiLR" style="margin-right: 10px; font-weight: bold;">Divisi:</label>
+                    <select id="filterDivisiLR" class="filter-input">
+                        <option value="">Semua Divisi</option>
+                        <option value="Angkutan">Angkutan</option>
+                        <option value="Besi">Besi</option>
+                        <option value="Pakan">Pakan</option>
+                        <option value="Angkutan">Angkutan</option>
+                        <option value="Besi">Besi</option>
+                        <option value="Pakan">Pakan</option>
+                    </select>
+                </div>
+                <div class="filter-group date-group">
+                    <input type="date" id="startLRDate" class="filter-input date-input">
+                    <span class="date-separator">-</span>
+                    <input type="date" id="endLRDate" class="filter-input date-input">
+                </div>
+                <button id="filterLRBtn" class="btn btn-primary btn-sm" onclick="displayLabaRugi()">Tampilkan</button>
+            </div>
+
+            <!-- Report Content -->
+            <div id="labaRugiContent" style="background: white; padding: 20px; border: 1px solid #ddd;">
+                <h3 style="border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-bottom: 10px;">PENDAPATAN</h3>
+                <table id="tablePendapatan" class="table table-bordered table-sm" style="margin-bottom: 20px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>Keterangan</th>
+                            <th style="width: 200px; text-align: right;">Jumlah (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyPendapatan">
+                        <!-- Filled by JS -->
+                    </tbody>
+                    <tfoot>
+                        <tr style="background-color: #f0fdf4;">
+                            <th colspan="2" style="text-align: right;">Total Pendapatan</th>
+                            <th id="totalPendapatanLR" style="text-align: right;">0</th>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <h3 style="border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; margin-top: 30px;">
+                    BEBAN / BIAYA</h3>
+                <table id="tableBeban" class="table table-bordered table-sm" style="margin-bottom: 20px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>Keterangan</th>
+                            <th style="width: 200px; text-align: right;">Jumlah (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyBeban">
+                        <!-- Filled by JS -->
+                    </tbody>
+                    <tfoot>
+                        <tr style="background-color: #fef2f2;">
+                            <th colspan="2" style="text-align: right;">Total Beban</th>
+                            <th id="totalBebanLR" style="text-align: right;">0</th>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div
+                    style="margin-top: 30px; border-top: 3px double #333; padding-top: 15px; font-size: 1.2em; display: flex; justify-content: space-between; font-weight: bold;">
+                    <span>LABA / RUGI BERSIH</span>
+                    <span id="labaBersihLR">Rp 0</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+    <div id="printModal" class="modal">
+        <!-- MODULE LAPORAN DIVISI -->
+    </div>
+    <div id="laporandivisiModule" class="module">
+        <div class="history-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>Laporan Per Divisi</h2>
+                <div style="display: flex; gap: 5px;">
+                    <button id="btnCetakLaporanDivisi" class="btn btn-primary btn-sm" onclick="printLaporanDivisi()">🖨️
+                        Cetak Laporan</button>
+                    <button id="btnExportExcelLaporanDivisi" class="btn btn-success btn-sm"
+                        onclick="exportExcelLaporanDivisi()">📊 Ekspor Excel</button>
+                </div>
+            </div>
+
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="filterDivisiSelect" style="margin-right: 10px; font-weight: bold;">Divisi:</label>
+                    <select id="filterDivisiSelect" class="filter-input">
+                        <option value="">Semua Divisi</option>
+                        <option value="Angkutan">Angkutan</option>
+                        <option value="Besi">Besi</option>
+                        <option value="Pakan">Pakan</option>
+                        <option value="Angkutan">Angkutan</option>
+                        <option value="Besi">Besi</option>
+                        <option value="Pakan">Pakan</option>
+                    </select>
+                </div>
+                <div class="filter-group date-group">
+                    <input type="date" id="startDivisiDate" class="filter-input date-input">
+                    <span class="date-separator">-</span>
+                    <input type="date" id="endDivisiDate" class="filter-input date-input">
+                </div>
+                <button id="filterDivisiBtn" class="btn btn-primary btn-sm"
+                    onclick="displayLaporanDivisi()">Tampilkan</button>
+            </div>
+
+            <div id="laporanDivisiContent">
+                <h3>Ringkasan Kinerja Divisi</h3>
+                <table id="tableRingkasanDivisi" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Divisi</th>
+                            <th>Total Pendapatan (Rp)</th>
+                            <th>Total Beban (Rp)</th>
+                            <th>Laba / Rugi (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyRingkasanDivisi">
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 30px;">Detail Transaksi Area</h3>
+                <div class="table-responsive">
+                    <table id="tableDetailDivisi" class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Divisi</th>
+                                <th>Tanggal</th>
+                                <th>No Ref</th>
+                                <th>Jenis</th>
+                                <th>Keterangan</th>
+                                <th>Pendapatan (Rp)</th>
+                                <th>Beban (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyDetailDivisi">
+                            <tr class="no-data">
+                                <td colspan="8">Silakan klik Tampilkan</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="6" style="text-align: right; font-weight: bold;">Grand Total</td>
+                                <td id="grandTotalPendapatanDivisi" style="text-align: right; font-weight: bold;">0
+                                </td>
+                                <td id="grandTotalBebanDivisi" style="text-align: right; font-weight: bold;">0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <!-- MODULE LAPORAN PPN -->
+    <div id="laporanppnModule" class="module">
+        <div class="history-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>Laporan PPN</h2>
+                <div style="display: flex; gap: 5px;">
+                    <button id="btnCetakLaporanPPN" class="btn btn-primary btn-sm" onclick="printLaporanPPN()">🖨️ Cetak
+                        Laporan</button>
+                    <button id="btnExportExcelLaporanPPN" class="btn btn-success btn-sm"
+                        onclick="exportExcelLaporanPPN()">📊 Ekspor Excel</button>
+                </div>
+            </div>
+
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label style="margin-right: 10px; font-weight: bold;">Kategori:</label>
+                    <select id="filterKategoriPPN" class="filter-input">
+                        <option value="">Semua Kategori</option>
+                        <option value="Non PPN">Non PPN</option>
+                        <option value="11">PPN 11%</option>
+                        <option value="1.1">PPN 1.1%</option>
+                        <option value="Dibebaskan">PPN Dibebaskan</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label style="margin-right: 10px; font-weight: bold;">Jenis:</label>
+                    <select id="filterJenisPPN" class="filter-input">
+                        <option value="">Semua (Penjualan & Pembelian)</option>
+                        <option value="Penjualan">Penjualan</option>
+                        <option value="Pembelian">Pembelian</option>
+                    </select>
+                </div>
+                <div class="filter-group date-group">
+                    <input type="date" id="startPPNDate" class="filter-input date-input">
+                    <span class="date-separator">-</span>
+                    <input type="date" id="endPPNDate" class="filter-input date-input">
+                </div>
+                <button id="filterPPNBtn" class="btn btn-primary btn-sm"
+                    onclick="displayLaporanPPN()">Tampilkan</button>
+            </div>
+
+            <div id="laporanPPNContent">
+                <table id="tableLaporanPPN" class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>No Faktur</th>
+                            <th>Jenis</th>
+                            <th>DPP (Rp)</th>
+                            <th>PPN (Rp)</th>
+                            <th>Total (Rp)</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyLaporanPPN">
+                        <tr class="no-data">
+                            <td colspan="8">Silakan klik Tampilkan</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" style="text-align: right; font-weight: bold;">Grand Total</td>
+                            <td id="totalDPPPPN" style="text-align: right; font-weight: bold;">0</td>
+                            <td id="totalPPNPPN" style="text-align: right; font-weight: bold;">0</td>
+                            <td id="totalTotalPPN" style="text-align: right; font-weight: bold;">0</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <div style="margin-top: 20px; font-weight: bold; font-size: 0.9em; color: #555;">
+                    * Non PPN & PPN Dibebaskan saat ini dikelompokkan berdasarkan nilai PPN 0 atau tidak
+                    ada.
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODULE PENCARIAN GLOBAL -->
+    <div id="pencarianModule" class="module">
+        <div class="history-container">
+            <h2>Pencarian Global</h2>
+            <div class="search-container" style="margin-bottom: 20px;">
+                <input type="text" id="inputGlobalSearch" class="search-input"
+                    style="width: 100%; padding: 15px; font-size: 1.2em; border: 2px solid #007bff; border-radius: 8px;"
+                    placeholder="Ketik kata kunci (No Faktur, Nama Pelanggan/Supplier, Keterangan)...">
+            </div>
+
+            <div id="globalSearchResults">
+                <div style="text-align: center; color: #777; margin-top: 50px;">
+                    <p>Mulai ketik untuk mencari transaksi penjualan, pembelian, atau arus kas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MODULE DATA MASTER -->
+    <div id="datamasterModule" class="module">
+        <h2 style="margin-bottom: 20px;">Data Master</h2>
+
+        <!-- Sub-tabs -->
+        <div class="sub-tabs">
+            <button class="sub-tab-btn active" onclick="switchMasterTab('pelanggan')">
+                👥 Pelanggan
+            </button>
+            <button class="sub-tab-btn" onclick="switchMasterTab('supplier')">
+                🏢 Supplier
+            </button>
+            <button class="sub-tab-btn" onclick="switchMasterTab('barang')">
+                📦 Barang
+            </button>
+        </div>
+
+        <!-- PELANGGAN SECTION -->
+        <div id="pelangganSection" class="master-section active">
+            <div class="form-container">
+                <h3>Form Pelanggan</h3>
+                <form id="customerForm">
+                    <input type="hidden" id="customerId" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerNama">Nama Pelanggan *</label>
+                            <input type="text" id="customerNama" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerTelepon">No. Telepon</label>
+                            <input type="tel" id="customerTelepon">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="customerAlamat">Alamat</label>
+                            <textarea id="customerAlamat" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerNpwp">NPWP / NIK</label>
+                            <input type="text" id="customerNpwp">
+                        </div>
+                        <div class="form-group">
+                            <label for="customerEmail">Email</label>
+                            <input type="email" id="customerEmail">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="customerKeterangan">Keterangan</label>
+                            <textarea id="customerKeterangan" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Simpan Pelanggan</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="history-container">
+                <h3>Daftar Pelanggan</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Alamat</th>
+                                <th>Telepon</th>
+                                <th>NPWP/NIK</th>
+                                <th>Email</th>
+                                <th>Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody">
+                            <tr class="no-data">
+                                <td colspan="8">Belum ada data pelanggan</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUPPLIER SECTION -->
+        <div id="supplierSection" class="master-section">
+            <div class="form-container">
+                <h3>Form Supplier</h3>
+                <form id="supplierForm">
+                    <input type="hidden" id="supplierId" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplierNama">Nama Supplier *</label>
+                            <input type="text" id="supplierNama" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierTelepon">No. Telepon</label>
+                            <input type="tel" id="supplierTelepon">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="supplierAlamat">Alamat</label>
+                            <textarea id="supplierAlamat" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplierNpwp">NPWP</label>
+                            <input type="text" id="supplierNpwp">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierEmail">Email</label>
+                            <input type="email" id="supplierEmail">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="supplierKeterangan">Keterangan</label>
+                            <textarea id="supplierKeterangan" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Simpan Supplier</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="history-container">
+                <h3>Daftar Supplier</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Alamat</th>
+                                <th>Telepon</th>
+                                <th>NPWP</th>
+                                <th>Email</th>
+                                <th>Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplierTableBody">
+                            <tr class="no-data">
+                                <td colspan="8">Belum ada data supplier</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- BARANG SECTION -->
+        <div id="barangSection" class="master-section">
+            <div class="form-container">
+                <h3>Form Barang</h3>
+                <form id="barangForm">
+                    <input type="hidden" id="barangId" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="barangKode">Kode Barang *</label>
+                            <input type="text" id="barangKode" placeholder="BRG-001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="barangNama">Nama Barang *</label>
+                            <input type="text" id="barangNama" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="barangKategori">Kategori</label>
+                            <select id="barangKategori">
+                                <option value="">Pilih Kategori</option>
+                                <option value="Besi">Besi</option>
+                                <option value="Pakan">Pakan</option>
+                                <option value="Bahan Bangunan">Bahan Bangunan</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="barangSatuan">Satuan *</label>
+                            <input type="text" id="barangSatuan" placeholder="Kg, Pcs, Karung, dll" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="barangKeterangan">Keterangan</label>
+                            <textarea id="barangKeterangan" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Simpan Barang</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="history-container">
+                <h3>Daftar Barang</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kode</th>
+                                <th>Nama Barang</th>
+                                <th>Kategori</th>
+                                <th>Satuan</th>
+                                <th>Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="barangTableBody">
+                            <tr class="no-data">
+                                <td colspan="7">Belum ada data barang</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Authentication Check Script - Must be loaded first -->
+    <script type="module">
+        import { checkAuth, logout, loadFromFirebase, syncWithFirebase, startAutoSync } from './auth.js';
+
+        // Check authentication before loading app
+        (async () => {
+            try {
+                const user = await checkAuth();
+
+                // Display user email
+                const userEmailElement = document.getElementById('userEmail');
+                if (userEmailElement) {
+                    userEmailElement.textContent = user.email;
+                }
+
+                // Load data from Firebase
+                await loadFromFirebase();
+
+                // Setup logout button
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', async () => {
+                        if (confirm('Apakah Anda yakin ingin keluar?')) {
+                            // Sync before logout
+                            await syncWithFirebase();
+                            await logout();
+                        }
+                    });
+                }
+
+                // Start auto-sync
+                startAutoSync();
+
+                // Sync before page unload
+                window.addEventListener('beforeunload', () => {
+                    syncWithFirebase();
+                });
+
+                console.log('App loaded successfully for user:', user.email);
+
+            } catch (error) {
+                console.error('Authentication failed:', error);
+                // Will be redirected to login by checkAuth
+            }
+        })();
+    </script>
+
+    <!-- Main Application Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>

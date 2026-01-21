@@ -1,0 +1,21 @@
+{
+    "name": "sistem-akuntansi-sgm",
+    "version": "1.0.0",
+    "description": "Sistem Akuntansi untuk PT. Sumber Ganda Mekar dengan Firebase & Vercel",
+    "main": "index.html",
+    "scripts": {
+        "dev": "vercel dev",
+        "deploy": "vercel --prod"
+    },
+    "keywords": [
+        "accounting",
+        "firebase",
+        "vercel",
+        "indonesia"
+    ],
+    "author": "PT. Sumber Ganda Mekar",
+    "license": "UNLICENSED",
+    "private": true,
+    "devDependencies": {},
+    "dependencies": {}
+}

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistem Akuntansi SGM</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: backgroundMove 20s linear infinite;
+        }
+
+        @keyframes backgroundMove {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .login-header h1 {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+        }
+
+        .login-header p {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            padding-left: 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 2.625rem;
+            font-size: 1.125rem;
+            color: #94a3b8;
+            transition: color 0.3s ease;
+        }
+
+        .form-group input:focus+.input-icon {
+            color: #667eea;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-login:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            display: none;
+            border-left: 4px solid #dc2626;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .login-footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.8125rem;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 2.625rem;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 1.125rem;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .login-header img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="logo.png" alt="SGM Logo">
+            <h1>Sistem Akuntansi SGM</h1>
+            <p>Silakan login untuk melanjutkan</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="nama@email.com" required autocomplete="email">
+                <span class="input-icon">📧</span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Masukkan password" required
+                    autocomplete="current-password">
+                <span class="input-icon">🔒</span>
+                <span class="password-toggle" id="passwordToggle">👁️</span>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">
+                <span id="loginBtnText">Masuk</span>
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <p>&copy; 2026 PT. Sumber Ganda Mekar. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.75rem;">Register akun baru dapat dilakukan oleh Admin</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration - GANTI DENGAN CONFIG FIREBASE ANDA
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Check if user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, redirect to main app
+                console.log('User already logged in:', user.email);
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Login form handling
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginBtnText = document.getElementById('loginBtnText');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Hide previous error
+            errorMessage.classList.remove('show');
+
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtnText.innerHTML = '<span class="loading-spinner"></span>Memproses...';
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                console.log('Login successful:', user.email);
+
+                // Store user info in sessionStorage
+                sessionStorage.setItem('userEmail', user.email);
+                sessionStorage.setItem('userId', user.uid);
+
+                // Redirect to main app
+                window.location.href = 'index.html';
+
+            } catch (error) {
+                console.error('Login error:', error);
+
+                let errorMsg = 'Terjadi kesalahan. Silakan coba lagi.';
+
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        errorMsg = 'Format email tidak valid.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMsg = 'Akun ini telah dinonaktifkan.';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMsg = 'Email tidak terdaftar.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMsg = 'Password salah.';
+                        break;
+                    case 'auth/invalid-credential':
+                        errorMsg = 'Email atau password salah.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMsg = 'Terlalu banyak percobaan login. Coba lagi nanti.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMsg = 'Tidak ada koneksi internet.';
+                        break;
+                }
+
+                errorMessage.textContent = errorMsg;
+                errorMessage.classList.add('show');
+
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtnText.textContent = 'Masuk';
+            }
+        });
+
+        // Password toggle
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordInput = document.getElementById('password');
+
+        passwordToggle.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordToggle.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                passwordToggle.textContent = '👁️';
+            }
+        });
+    </script>
+</body>
+
+</html>
