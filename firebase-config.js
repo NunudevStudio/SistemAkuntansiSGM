@@ -9,9 +9,8 @@ const firebaseConfig = {
     storageBucket: "sistem-akuntansi-sgm.firebasestorage.app",
     messagingSenderId: "757127370866",
     appId: "1:757127370866:web:96909bb1273db0211e8aeb",
-    measurementId: "G-MQ8330PEG1",
-    // Jika menggunakan Realtime Database, tambahkan:
-    databaseURL: "https://sistem-akuntansi-sgm-default-rtdb.asia-southeast1.firebasedatabase.app"
+    measurementId: "G-MQ8330PEG1"
 };
 
 export default firebaseConfig;
+
