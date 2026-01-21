@@ -1,5 +1,7 @@
-// Firebase Configuration
-// GANTI DENGAN KONFIGURASI FIREBASE ANDA
+// Firebase Configuration & Initialization
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getDatabase } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyC5URazlk3LjVqmnIvEL9dzYYII9P2kmbA",
@@ -12,5 +14,12 @@ const firebaseConfig = {
     measurementId: "G-MQ8330PEG1"
 };
 
+// Initialize Firebase (ONCE!)
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+
+// Export everything
+export { auth, database };
 export default firebaseConfig;
 

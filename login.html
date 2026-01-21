@@ -726,45 +726,37 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK & Login Script -->
     <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { auth } from './firebase-config.js';
+        import { signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        // Import Firebase configuration from external file
-        import firebaseConfig from './firebase-config.js';
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        // Flag to prevent redirect loop
+        // Flags
         let isRedirecting = false;
+        let authCheckDone = false;
 
-        // Check if user is already logged in - ONE TIME CHECK
+        // Check if already logged in - ONE TIME ONLY
         const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (authCheckDone) return; // Already checked!
+            authCheckDone = true;
+            unsubscribe(); // Stop listening
+
             if (user && !isRedirecting) {
-                // User is signed in, redirect to main app
-                console.log('User already logged in:', user.email);
+                console.log('✅ Already logged in:', user.email);
                 isRedirecting = true;
-
-                // Unsubscribe immediately to prevent multiple calls
-                unsubscribe();
-
-                // Small delay to ensure clean transition
                 setTimeout(() => {
-                    window.location.replace('index.html'); // Use replace to prevent back button loop
+                    window.location.replace('index.html');
                 }, 100);
             }
         });
 
-        // Login form handling
+        // Login form elements
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
         const loginBtn = document.getElementById('loginBtn');
         const loginBtnText = document.getElementById('loginBtnText');
 
+        // Login form handler
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -782,21 +774,19 @@
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                console.log('Login successful:', user.email);
+                console.log('✅ Login successful:', user.email);
 
-                // Store user info in sessionStorage
+                // Store user info
                 sessionStorage.setItem('userEmail', user.email);
                 sessionStorage.setItem('userId', user.uid);
                 sessionStorage.setItem('isAuthenticated', 'true');
 
-                // Set redirect flag
+                // Set flag and redirect
                 isRedirecting = true;
-
-                // Redirect to main app using replace
                 window.location.replace('index.html');
 
             } catch (error) {
-                console.error('Login error:', error);
+                console.error('❌ Login error:', error);
 
                 let errorMsg = 'Terjadi kesalahan. Silakan coba lagi.';
 
