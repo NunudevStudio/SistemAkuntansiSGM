@@ -9,31 +9,61 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-// Check authentication status
+// Flag to prevent redirect loops
+let isCheckingAuth = false;
+let isRedirecting = false;
+
+// Check authentication status - ONE TIME CHECK
 function checkAuth() {
+    // Prevent multiple simultaneous checks
+    if (isCheckingAuth) {
+        return new Promise((resolve) => {
+            // Wait a bit and retry
+            setTimeout(() => resolve(checkAuth()), 100);
+        });
+    }
+
+    isCheckingAuth = true;
+
     return new Promise((resolve, reject) => {
-        onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            // Unsubscribe immediately to prevent multiple calls
+            unsubscribe();
+            isCheckingAuth = false;
+
             if (user) {
                 console.log('User authenticated:', user.email);
                 resolve(user);
             } else {
-                console.log('User not authenticated, redirecting to login...');
-                window.location.href = 'login.html';
+                if (!isRedirecting) {
+                    console.log('User not authenticated, redirecting to login...');
+                    isRedirecting = true;
+
+                    // Clear any auth data
+                    sessionStorage.clear();
+
+                    // Use replace to prevent back button loop
+                    window.location.replace('login.html');
+                }
                 reject('Not authenticated');
             }
         });
     });
 }
 
+
 // Logout function
 async function logout() {
     try {
+        isRedirecting = true;
         await signOut(auth);
         sessionStorage.clear();
         localStorage.clear();
-        window.location.href = 'login.html';
+        // Use replace to prevent back button issues
+        window.location.replace('login.html');
     } catch (error) {
         console.error('Logout error:', error);
+        isRedirecting = false;
         alert('Gagal logout: ' + error.message);
     }
 }

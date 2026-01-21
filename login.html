@@ -739,12 +739,23 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Check if user is already logged in
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
+        // Flag to prevent redirect loop
+        let isRedirecting = false;
+
+        // Check if user is already logged in - ONE TIME CHECK
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user && !isRedirecting) {
                 // User is signed in, redirect to main app
                 console.log('User already logged in:', user.email);
-                window.location.href = 'index.html';
+                isRedirecting = true;
+
+                // Unsubscribe immediately to prevent multiple calls
+                unsubscribe();
+
+                // Small delay to ensure clean transition
+                setTimeout(() => {
+                    window.location.replace('index.html'); // Use replace to prevent back button loop
+                }, 100);
             }
         });
 
@@ -776,9 +787,13 @@
                 // Store user info in sessionStorage
                 sessionStorage.setItem('userEmail', user.email);
                 sessionStorage.setItem('userId', user.uid);
+                sessionStorage.setItem('isAuthenticated', 'true');
 
-                // Redirect to main app
-                window.location.href = 'index.html';
+                // Set redirect flag
+                isRedirecting = true;
+
+                // Redirect to main app using replace
+                window.location.replace('index.html');
 
             } catch (error) {
                 console.error('Login error:', error);
