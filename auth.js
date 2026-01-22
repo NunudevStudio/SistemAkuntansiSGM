@@ -9,7 +9,12 @@ let isRedirecting = false;
 
 // Check Auth & Redirect (Called from index.html)
 export async function checkAuth() {
-    if (authCheckDone) return; // Prevent multiple checks
+    if (authCheckDone) {
+        console.log('⚠️ Auth already checked, skipping...');
+        return; // Prevent multiple checks
+    }
+
+    console.log('🔍 Checking authentication...');
 
     return new Promise((resolve, reject) => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -18,17 +23,34 @@ export async function checkAuth() {
 
             if (user) {
                 console.log('✅ User authenticated:', user.email);
+
+                // Store in session for extra safety
+                sessionStorage.setItem('userEmail', user.email);
+                sessionStorage.setItem('userId', user.uid);
+                sessionStorage.setItem('isAuthenticated', 'true');
+
                 resolve(user);
             } else {
-                console.log('❌ Not authenticated, redirecting...');
+                console.log('❌ Not authenticated, redirecting to login...');
                 if (!isRedirecting) {
                     isRedirecting = true;
                     sessionStorage.clear();
-                    window.location.replace('login.html');
+
+                    // Small delay to prevent race conditions
+                    setTimeout(() => {
+                        window.location.replace('login.html');
+                    }, 300);
                 }
                 reject('Not authenticated');
             }
         });
+
+        // Timeout after 10 seconds to prevent infinite hang
+        setTimeout(() => {
+            console.error('⚠️ Auth check timeout');
+            unsubscribe();
+            reject('Auth check timeout');
+        }, 10000);
     });
 }
 

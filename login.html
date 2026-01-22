@@ -733,22 +733,6 @@
 
         // Flags
         let isRedirecting = false;
-        let authCheckDone = false;
-
-        // Check if already logged in - ONE TIME ONLY
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (authCheckDone) return; // Already checked!
-            authCheckDone = true;
-            unsubscribe(); // Stop listening
-
-            if (user && !isRedirecting) {
-                console.log('✅ Already logged in:', user.email);
-                isRedirecting = true;
-                setTimeout(() => {
-                    window.location.replace('index.html');
-                }, 100);
-            }
-        });
 
         // Login form elements
         const loginForm = document.getElementById('loginForm');
@@ -760,8 +744,21 @@
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
+            // Prevent multiple submissions
+            if (isRedirecting) {
+                console.log('⚠️ Already redirecting, ignoring submit');
+                return;
+            }
+
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+
+            // Basic validation
+            if (!email || !password) {
+                errorMessage.textContent = 'Email dan password harus diisi.';
+                errorMessage.classList.add('show');
+                return;
+            }
 
             // Hide previous error
             errorMessage.classList.remove('show');
@@ -771,6 +768,7 @@
             loginBtnText.innerHTML = '<span class="loading-spinner"></span>Memproses...';
 
             try {
+                console.log('🔐 Attempting login for:', email);
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
@@ -781,9 +779,15 @@
                 sessionStorage.setItem('userId', user.uid);
                 sessionStorage.setItem('isAuthenticated', 'true');
 
-                // Set flag and redirect
+                // Update button
+                loginBtnText.innerHTML = '✅ Berhasil! Mengalihkan...';
+
+                // Set flag and redirect with small delay
                 isRedirecting = true;
-                window.location.replace('index.html');
+
+                setTimeout(() => {
+                    window.location.replace('index.html');
+                }, 500);
 
             } catch (error) {
                 console.error('❌ Login error:', error);
